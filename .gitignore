@@ -1,14 +1,9 @@
-# . gitignore - Fichiers a ne PAS ve rs io nn er
-# E n v i r o n n e m e n t Python
-_ _ p y c a c h e _ _ /
-*. pyc
-venv /
-. env
-# Modele ML ( trop gros pour GitHub )
-models /*. pkl
-# Fichiers OS
-. DS_Store
-Thumbs . db
-# IDE
-. vscode /
-. idea /
+__pycache__/
+*.pyc
+venv/
+.env
+models/*.pkl
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
