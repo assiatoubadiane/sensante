@@ -23,6 +23,10 @@ temp_by_diag = df.groupby("diagnostic")["temperature"].mean()
 for diag, temp in temp_by_diag.items():
     print(diag + " : " + str(round(temp,1)) + " C")
 
+print("\n--- Repartition par sexe et diagnostic ---")
+sexe_diag = df.groupby(["sexe", "diagnostic"]).size()
+print(sexe_diag)
+
 print("=" * 50)
 print("Exploration terminee !")
 print("=" * 50)
