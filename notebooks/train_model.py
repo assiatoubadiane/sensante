@@ -174,4 +174,57 @@ for classe, proba in zip(model_loaded.classes_, probas):
     print(f"  {classe:12s} : {proba:.1%} {bar}")
     
     
+  # Exercice 1 : Importance des features
+print("\n--- Importance des features ---")
+importances = model.feature_importances_
+for name, imp in sorted(zip(feature_cols, importances),
+                        key=lambda x: x[1], reverse=True):
+    bar = '█' * int(imp * 50)
+    print(f"  {name:20s} : {imp:.3f} {bar}")  
+    
+    # Exercice 2 : Tester avec 3 patients fictifs
+print("\n--- Test avec 3 patients fictifs ---")
+
+patients = [
+    {
+        'nom': 'Patient 1 - Jeune sans symptômes',
+        'age': 20, 'sexe': 'M', 'temperature': 37.0,
+        'tension_sys': 120, 'toux': False, 'fatigue': False,
+        'maux_tete': False, 'frissons': False, 'nausee': False,
+        'region': 'Dakar'
+    },
+    {
+        'nom': 'Patient 2 - Adulte forte fièvre',
+        'age': 35, 'sexe': 'F', 'temperature': 40.5,
+        'tension_sys': 100, 'toux': False, 'fatigue': True,
+        'maux_tete': True, 'frissons': True, 'nausee': True,
+        'region': 'Thiès'
+    },
+    {
+        'nom': 'Patient 3 - Personne âgée avec toux',
+        'age': 65, 'sexe': 'M', 'temperature': 38.5,
+        'tension_sys': 140, 'toux': True, 'fatigue': True,
+        'maux_tete': False, 'frissons': False, 'nausee': False,
+        'region': 'Saint-Louis'
+    }
+]
+
+for p in patients:
+    sexe_enc = le_sexe_loaded.transform([p['sexe']])[0]
+    region_enc = le_region_loaded.transform([p['region']])[0]
+    
+    features = [
+        p['age'], sexe_enc, p['temperature'], p['tension_sys'],
+        int(p['toux']), int(p['fatigue']), int(p['maux_tete']),
+        int(p['frissons']), int(p['nausee']), region_enc
+    ]
+    
+    diagnostic = model_loaded.predict([features])[0]
+    probas = model_loaded.predict_proba([features])[0]
+    proba_max = probas.max()
+    
+    print(f"\n{p['nom']}")
+    print(f"  Age: {p['age']} ans | Sexe: {p['sexe']} | Température: {p['temperature']}°C")
+    print(f"  → Diagnostic : {diagnostic} ({proba_max:.1%})")
+    
     
