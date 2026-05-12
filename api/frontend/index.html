@@ -111,6 +111,10 @@
 </div>
 
         </div>
+    <!-- Historique des consultations -->
+    <div id="historique-section" class="mt-6">
+    </div>
+
     </main>
 
     <!-- FOOTER -->
@@ -124,7 +128,8 @@
 // URL de ton API FastAPI
 // ====================================
 const API_URL = "http://localhost:8000";
-
+// Historique des 5 dernières consultations
+const historique = [];
 // ====================================
 // FONCTION PRINCIPALE : appelée au clic
 // ====================================
@@ -193,11 +198,21 @@ function afficherChargement() {
 function afficherResultat(r) {
     // Couleurs selon le diagnostic
     const couleurs = {
-        palu:  { bg: "bg-red-100",    text: "text-red-800",    bar: "bg-red-500",    badge: "bg-red-500"    },
+        paludisme:  { bg: "bg-red-100",    text: "text-red-800",    bar: "bg-red-500",    badge: "bg-red-500"    },
         grippe:{ bg: "bg-orange-100", text: "text-orange-800", bar: "bg-orange-500", badge: "bg-orange-500" },
-        typh:  { bg: "bg-yellow-100", text: "text-yellow-800", bar: "bg-yellow-500", badge: "bg-yellow-500" },
+        typhoide:  { bg: "bg-yellow-100", text: "text-yellow-800", bar: "bg-yellow-500", badge: "bg-yellow-500" },
         sain:  { bg: "bg-green-100",  text: "text-green-800",  bar: "bg-green-500",  badge: "bg-green-500"  }
     };
+
+    // Icônes par diagnostic
+const icones = {
+    paludisme:   "🦟",
+    grippe: "🤧",
+    typhoide:   "🤒",
+    sain:   "✅"
+};
+
+const icone = icones[r.diagnostic] || "🩺";
 
     const c   = couleurs[r.diagnostic] || couleurs["sain"];
     const pct = Math.round(r.probabilite * 100);
@@ -209,7 +224,7 @@ function afficherResultat(r) {
             <!-- Diagnostic principal -->
             <div class="${c.bg} rounded-lg p-4 mb-4">
                 <p class="text-sm text-gray-600">Diagnostic :</p>
-                <p class="text-2xl font-bold ${c.text} uppercase mt-1">${r.diagnostic}</p>
+                <p class="text-2xl font-bold ${c.text} uppercase mt-1">${icone} ${r.diagnostic}</p>
             </div>
 
             <!-- Barre de probabilité -->
@@ -235,6 +250,55 @@ function afficherResultat(r) {
                 <p class="text-sm text-gray-700">${r.message}</p>
             </div>
         </div>`;
+
+    // Ajouter à l'historique
+historique.unshift({
+    diagnostic: r.diagnostic,
+    probabilite: Math.round(r.probabilite * 100),
+    confiance: r.confiance,
+    icone: icone
+});
+
+// Garder seulement les 5 dernières
+if (historique.length > 5) historique.pop();
+
+// Afficher l'historique
+afficherHistorique();
+
+// ====================================
+// AFFICHER L'HISTORIQUE
+// ====================================
+function afficherHistorique() {
+    const section = document.getElementById("historique-section");
+
+    const lignes = historique.map((c, i) => `
+        <tr class="border-t border-gray-100">
+            <td class="py-2 px-3 text-sm text-gray-600">${i + 1}</td>
+            <td class="py-2 px-3 text-sm font-medium">${c.icone} ${c.diagnostic.toUpperCase()}</td>
+            <td class="py-2 px-3 text-sm">${c.probabilite}%</td>
+            <td class="py-2 px-3 text-sm">${c.confiance}</td>
+        </tr>
+    `).join("");
+
+    section.innerHTML = `
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">📋 Historique des consultations</h2>
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-3 text-left text-xs text-gray-500">#</th>
+                        <th class="py-2 px-3 text-left text-xs text-gray-500">Diagnostic</th>
+                        <th class="py-2 px-3 text-left text-xs text-gray-500">Probabilité</th>
+                        <th class="py-2 px-3 text-left text-xs text-gray-500">Confiance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${lignes}
+                </tbody>
+            </table>
+        </div>`;
+}
+
 }
 
 // ====================================
