@@ -6,3 +6,6 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+
+# Cles API - NE JAMAIS COMMITTER
+.env
