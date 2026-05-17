@@ -1,6 +1,5 @@
 # Image de base : Python 3.11 léger
 FROM python:3.11-slim
-
 # Dossier de travail dans le conteneur
 WORKDIR /app
 
