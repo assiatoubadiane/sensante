@@ -192,3 +192,13 @@ def model_info():
         "classes": list(model.classes_),
         "nombre_features": model.n_features_in_
     }
+    
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Servir le frontend
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/")
+def serve_frontend():
+    return FileResponse("frontend/index.html")    
